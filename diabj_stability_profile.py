@@ -179,11 +179,15 @@ class Stability:
         print(g)
         radii = [a for a in range(int((float(SE[0][0]) - float(SE[0][1]))/2), int((float(SE[0][0]) + float(SE[0][1]))/2), 1)]
         #radii is a list of radii determined in 
+        
         def peclet(r):
-           return (2 * np.pi * g * dp * pow((r/(1e-9)), 4))/(3 * kb * (t + 0.000001))
+            #Calculates peclet number
+            return (2 * np.pi * g * dp * pow((r/(1e-9)), 4))/(3 * kb * (t + 0.000001))
         
         list1=list(map(peclet, radii))
         bools = []
+        #Determines if peclet numbers calculated based on a range of radii are >> or <<1 (indicating ortho or perikinetic)
+        #creates a 'bool-like' list of 0,1,or 2 based on peclet number characteristics and then finds how many of them agree with each other
         for j in list1:
             if j >1000:
                 bools.append(1)
@@ -191,6 +195,7 @@ class Stability:
                 bools.append(2)
             else:
                 bools.append(0)
+                
         periK = bools.count(1)
         orthoK = bools.count(2)
         diff = bools.count(0)
