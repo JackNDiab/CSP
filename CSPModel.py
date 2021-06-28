@@ -152,9 +152,9 @@ class Stability:
             return SE.append(srl4)
         
     def flocculation():
-        #Calculates flocculation parameters and returns statements regarting the nature of the flocculation behavior
+        #Calculates flocculation parameters and returns statements regarding the nature of the flocculation behavior
         def p_particle():
-            #Returns density based on user coposition input
+            #Returns density based on user composition input
             if pc==0:
                 return 2.6
             elif pc==1:
@@ -178,7 +178,7 @@ class Stability:
         dp=p_particle() - p_h20
         g= grav()
         radii = [a for a in range(int((float(SE[0][0]) - float(SE[0][1]))/2), int((float(SE[0][0]) + float(SE[0][1]))/2), 1)]
-        #radii is a list of radii determined in 
+        #radii is a list of radii determined based on sizes from estimate_size
         
         def peclet(r):
             #Calculates peclet number
@@ -187,7 +187,7 @@ class Stability:
         list1=list(map(peclet, radii))
         bools = []
         #Determines if peclet numbers calculated based on a range of radii are >> or <<1 (indicating ortho or perikinetic)
-        #creates a 'bool-like' list of 0,1,or 2 based on peclet number characteristics and then finds how many of them agree with each other
+        #creates a 'bool-like' list of 0,1,or 2 based on peclet number characteristics and then calculates percentage of each characteristic
         for j in list1:
             if j >1000:
                 bools.append(1)
@@ -209,7 +209,7 @@ class Stability:
         else:
             print(f"Flocculation is approximately {percent_diff * 100}% diffusive. Niether sedimentation or mass transport domiates ({percent_pk * 100}% PK, {percent_ok * 100}% OK)")
             
-#size and flocc simply control the path of functions executed based on necessity and user choice
+#size simply controls the path of functions executed based on necessity and user choice
     def size():
         Stability.is_stable()
         #This just allows the program to skip estimate_size calculations if there is no need
