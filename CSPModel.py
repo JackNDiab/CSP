@@ -49,7 +49,7 @@ phpzc_siC=1.854 * c + 3.2
 #Emperically-based scaling of phzpc with respect to ion concentration effects is applied using an average.
 #Its a rudimentary implementation that increases the accuracy of the phzpc calculations within reasonable temperature range (-20 to 100).
 phpzc_avg=(phpzc_magT+phpzc_magT2+phpzc_siC)/3
-print(f"\n\033[4m*** Output ***\033[0m \npH of Point of Zero Charge is {phpzc_avg}")
+print(f"\n\033[4m*** Output ***\033[0m \n\npH of Point of Zero Charge is {phpzc_avg}")
 
 
 class Stability: 
@@ -126,17 +126,16 @@ class Stability:
             print(f"\nMagnetite size range estimate is {sr1} +/- {usr1}")
             return SE.append(srl1)
             
-        elif pc==2 &smc/4>30:
+        elif pc==2:
             sr2=smc/4
             #Based on Supattarasakda et al 2013
             usr2=sr2/5
             srl2=[sr2,usr2]
             print(f"\nHematite particle range estimate is {sr2} +/- {usr2}")
+            if (smc/4)<30:
+                print("\nWhile parameters are stable, particle size is too small to represent a stable colloid for this composition (<30 nm)")
             return SE.append(srl2)
-            
-        elif pc==2&smc/4<30:
-            print("\nWhile parameters are stable, particle size is too small to represent a stable colloid for this composition (<30 nm)")
-                    
+
         elif pc==3:
             sr3=smc*1.67
             usr3=sr3/4
@@ -185,6 +184,7 @@ class Stability:
             return (2 * np.pi * g * dp * pow((r/(1e-9)), 4))/(3 * kb * (t + 0.000001))
         
         list1=list(map(peclet, radii))
+        print(list1)
         bools = []
         #Determines if peclet numbers calculated based on a range of radii are >> or <<1 (indicating ortho or perikinetic)
         #creates a 'bool-like' list of 0,1,or 2 based on peclet number characteristics and then calculates percentage of each characteristic
@@ -204,6 +204,7 @@ class Stability:
         percent_ok = orthoK/(len(bools))
         if percent_pk > 0.5:
             print(f"Flocculation is approximately {percent_pk * 100}% perikenetic")
+            
         elif percent_ok > 0.5:
             print(f"Flocculation is approximately {percent_ok * 100}% orthokenetic")
         else:
@@ -212,6 +213,7 @@ class Stability:
 #size simply controls the path of functions executed based on necessity and user choice
     def size():
         Stability.is_stable()
+        
         #This just allows the program to skip estimate_size calculations if there is no need
         #this will be more helpful as more taxing calculations are added and functionality for characterizing flocculation is added
         if Stability.is_stable() == 'y':
@@ -225,5 +227,5 @@ class Stability:
             print("\nIF destabilization under these conditions/parameters occurs:")
             Stability.flocculation()
 
-
+Stability.size()
             
