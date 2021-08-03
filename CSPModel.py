@@ -110,7 +110,11 @@ class Stability:
     def estimate_size():
         #Uses the size magnitue constant from is_stable to calculate corrections based on user defined composition
         #Range is represented as an arbitrary uncertainty based on characteristics of each composition
-        smc=Stability.is_stable()
+        if Stability.is_stable() == float():
+            smc=Stability.is_stable()
+        else:
+            return
+        
         if pc==0:
             sr0=smc/1.3
             usr0=sr0/5
