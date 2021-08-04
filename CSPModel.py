@@ -9,7 +9,7 @@ Created on Mon Jun 28 08:37:44 2021
 import numpy as np
 import matplotlib.pyplot as plt
 
-global phpzc_avg, ci, soln_ph, x1,x2, p_h2o, planet, t
+global phpzc_avg, ci, soln_ph, x1,x2, p_h2o, planet, t, cont
 
 p_h20=1.0273
 kb=1.3806 * 10**-23
@@ -65,7 +65,7 @@ class Stability:
         X=(2.01, 2.24, 2.88, 3.43)
         
         def substat(y):
-            #sub func for making simple raw x1 and x2 calculations 
+            #sub func for making simple raw x1 and x2 calculations. Mostly useless rn, included mostly for potential future expansion
             x1= phpzc_avg-y
             x2= phpzc_avg+y
             
@@ -93,33 +93,44 @@ class Stability:
             xe=x1-soln_ph
             ZP_magnitude=-40*(pow(0.8, xe))+70
             size_mag_const=-220*np.arctan((ZP_magnitude/10)-4) + 310
-            return size_mag_const
+            return size_mag_const, 0
         
         elif x2<=soln_ph<=14:
-
             xe=soln_ph-x2
             ZP_magnitude=-40*(pow(0.8, xe))+70
             size_mag_const=-220*np.arctan((ZP_magnitude/10)-4) + 310
-            return size_mag_const
+            return size_mag_const, 0
     
         else:
-            i=input(print("Colloid unstable. Start instability analysis? (y/n): "))
-            return i
+            print("Colloid Unstable Under These Conditions")
+            # if i == 'y':
+            xe1=abs(x1-soln_ph)
+            xe2=abs(x2-soln_ph)
+            if xe1 > xe2:
+                xe = xe1
+            elif xe2 > xe1:
+                xe = xe2
+            ZP_magnitude=-40*(pow(0.8, xe))+70
+            size_mag_const=-220*np.arctan((ZP_magnitude/10)-4) + 310
+            return size_mag_const, 1
         
         
     def estimate_size():
         #Uses the size magnitue constant from is_stable to calculate corrections based on user defined composition
         #Range is represented as an arbitrary uncertainty based on characteristics of each composition
-        if Stability.is_stable() == float():
-            smc=Stability.is_stable()
-        else:
-            return
+     
+        smc,indicator=Stability.is_stable()
+        if indicator==1:
+            cont=input("* Continue with calculations? (y/n): ")
+        elif indicator==0:
+            cont='y'
         
         if pc==0:
             sr0=smc/1.3
             usr0=sr0/5
             srl0=[sr0,usr0]
-            print(f"\nSilica size range estimate is {sr0} +/- {usr0}")
+            if cont == 'y':
+                print(f"\nSilica particle size range estimate is {sr0} +/- {usr0} nm")
             return SE.append(srl0)
             
         elif pc==1:
@@ -127,7 +138,10 @@ class Stability:
             #Based on Thapa et al 2004
             usr1=sr1/5
             srl1=[sr1, usr1]
-            print(f"\nMagnetite size range estimate is {sr1} +/- {usr1}")
+            if cont == 'y':
+                print(f"\nMagnetite particle size range estimate is {sr1} +/- {usr1} nm")
+                if (smc/4.5)<30:
+                    print("\nParticle size is most likely too small to represent a stable colloid for this composition (<30 nm)")
             return SE.append(srl1)
             
         elif pc==2:
@@ -135,24 +149,28 @@ class Stability:
             #Based on Supattarasakda et al 2013
             usr2=sr2/5
             srl2=[sr2,usr2]
-            print(f"\nHematite particle range estimate is {sr2} +/- {usr2}")
-            if (smc/4)<30:
-                print("\nWhile parameters are stable, particle size is too small to represent a stable colloid for this composition (<30 nm)")
+            if cont == 'y':
+                print(f"\nHematite particle range estimate is {sr2} +/- {usr2} nm")
+                if (smc/4)<30:
+                    print("\nParticle size is most likely too small to represent a stable colloid for this composition (<30 nm)")
             return SE.append(srl2)
 
         elif pc==3:
             sr3=smc*1.67
             usr3=sr3/4
             srl3=[sr3, usr3]
-            print(f"\nRulite size range estimate is {sr3} +/- {usr3} ")
+            if cont == 'y':
+                print(f"\nRulite particle size range estimate is {sr3} +/- {usr3} nm")
             return SE.append(srl3)
         
         elif pc==4:
             sr4=smc*1.67
             usr4=sr4/3
             srl4=[sr4, usr4]
-            print(f"\nCarbonate size range estimate is {sr4} +/- {usr4} ***Note*** Carbonate crystals form very rapidly and therefore ")
+            if cont == 'y':
+                print(f"\nCarbonate particle size range estimate is {sr4} +/- {usr4} nm \n***Note*** Carbonate crystals form very rapidly and therefore are most likely transient")
             return SE.append(srl4)
+    
         
     def flocculation():
         #Calculates flocculation parameters and returns statements regarding the nature of the flocculation behavior
@@ -188,7 +206,7 @@ class Stability:
             return (2 * np.pi * g * dp * pow((r/(1e-9)), 4))/(3 * kb * (t + 0.000001))
         
         list1=list(map(peclet, radii))
-        print(list1)
+        # print(list1)
         bools = []
         #Determines if peclet numbers calculated based on a range of radii are >> or <<1 (indicating ortho or perikinetic)
         #creates a 'bool-like' list of 0,1,or 2 based on peclet number characteristics and then calculates percentage of each characteristic
@@ -207,29 +225,24 @@ class Stability:
         percent_diff = diff/(len(bools))
         percent_ok = orthoK/(len(bools))
         if percent_pk > 0.5:
-            print(f"Flocculation is approximately {percent_pk * 100}% perikenetic")
+            print(f"\nFlocculation is approximately {percent_pk * 100}% perikenetic")
             
         elif percent_ok > 0.5:
-            print(f"Flocculation is approximately {percent_ok * 100}% orthokenetic")
+            print(f"\nFlocculation is approximately {percent_ok * 100}% orthokenetic")
         else:
-            print(f"Flocculation is approximately {percent_diff * 100}% diffusive. Niether sedimentation or mass transport domiates ({percent_pk * 100}% PK, {percent_ok * 100}% OK)")
+            print(f"\nFlocculation is approximately {percent_diff * 100}% diffusive. Niether sedimentation or mass transport domiates ({percent_pk * 100}% PK, {percent_ok * 100}% OK)")
             
 #size simply controls the path of functions executed based on necessity and user choice
+
     def size():
-        Stability.is_stable()
+        Stability.estimate_size()
+        if len(SE) == 0:
+            return
+        else:
+            Stability.flocculation()
         
         #This just allows the program to skip estimate_size calculations if there is no need
         #this will be more helpful as more taxing calculations are added and functionality for characterizing flocculation is added
-        if Stability.is_stable() == 'y':
-            Stability.estimate_size()
-            Stability.flocculation()
-        #last 2 statements do the same thing. In the future this might be differentiated.
-        elif Stability.is_stable() == 'n':
-            Stability.estimate_size()
-        else:
-            Stability.estimate_size()
-            print("\nIF destabilization under these conditions/parameters occurs:")
-            Stability.flocculation()
 
-Stability.size()
-            
+
+Stability.size()          
