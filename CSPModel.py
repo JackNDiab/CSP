@@ -9,18 +9,29 @@ Created on Mon Jun 28 08:37:44 2021
 import numpy as np
 import matplotlib.pyplot as plt
 
-global phpzc_avg, ci, soln_ph, x1,x2, p_h2o, planet, t, cont
+global phpzc_avg, ci, soln_ph, x1,x2, p_h2o, planet, t, cont, kb
 
 p_h20=1.0273
 kb=1.3806 * 10**-23
 SE=[]
 
-t=float(input("Temperature (Values outside the range of 0 to 95 degrees C are extrapolated): "))
-c=float(input("Effective Salt Concentration (counterion) in mg ions/g of Colloid *Does not represent total salt concentration* *Acuurate upper limit ~ 5mg/g*: "))
-pc=int(input("Composition (0=silicate based, 1=magnetite based, 2=Hematite based, 3= Rutile based, 4=carbonate based): "))
-ci=int(input("Confidence interval of collod stability (75, 80, 90, 95) *80 reccomended*: "))
-soln_ph=float(input("pH of solution: "))
-planet= int(input("Planetary body; Ceres (0), Enceladus(1), Earth(2): "))
+# t=float(input("Temperature (Values outside the range of 0 to 95 degrees C are extrapolated): "))
+# c=float(input("Effective Salt Concentration (counterion) in mg ions/g of Colloid *Does not represent total salt concentration* *Acuurate upper limit ~ 5mg/g*: "))
+# pc=int(input("Composition (0=silicate based, 1=magnetite based, 2=Hematite based, 3= Rutile based, 4=carbonate based): "))
+# ci=int(input("Confidence interval of collod stability (75, 80, 90, 95) *80 reccomended*: "))
+# soln_ph=float(input("pH of solution: "))
+# planet= int(input("Planetary body; Ceres(0), Enceladus(1), Earth(2), Europa(3): "))
+
+
+# temp_lst=[-20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40 ,45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95]
+# p_lst=[]
+
+t=20
+c=0
+pc=0
+ci=80
+soln_ph=5
+planet=3
 
 #comp returns a integer that accounts for differences in the zero point charge pH (phzpc) between particles of differing composition
 #comp correction is based on literature values of 'Schoonen 1994' as well as other emperical phzpc data.
@@ -38,6 +49,7 @@ def comp(p):
 
 #Magnetite pzc w/ respect to temp based on 'Schoonen 1994'.
 #Experimental values do not exceed 100 degrees C, up to 350 degrees C has been extrapolated
+
 phpzc_magT=7.4318 - 0.02299*t + 7.32e-5 * (t**2) - 1.24e-7 * (t**3) + (comp(pc))
 phpzc_magT2=7.2806 - 0.03248*t + 0.000152*(t**2) - 2.72e-7 * (t**3) + (comp(pc))
 
@@ -49,7 +61,7 @@ phpzc_siC=1.854 * c + 3.2
 #Emperically-based scaling of phzpc with respect to ion concentration effects is applied using an average.
 #Its a rudimentary implementation that increases the accuracy of the phzpc calculations within reasonable temperature range (-20 to 100).
 phpzc_avg=(phpzc_magT+phpzc_magT2+phpzc_siC)/3
-print(f"\n\033[4m*** Output ***\033[0m \n\npH of Point of Zero Charge is {phpzc_avg}")
+print(f"\n\033[4m*** Output ***\033[0m \n\npH of Point of Zero Charge is {phpzc_avg} at {t} \N{DEGREE SIGN}C")
 
 
 class Stability: 
@@ -88,17 +100,19 @@ class Stability:
         #Based on pH bounds x1 and x2, is_stable calculates the "raw" size of the colloid
         #xe represents the distance from the "instability boundary" which is used to extrapolate zeta potential based on a emperically based curve (Ostolska and Wiśniewska 2014; Berg et al. 2009)
         x1,x2=Stability.stat()
-        
+        print(f'x1,x2 {x1}, {x2}')
         if 0<=soln_ph<=x1:
             xe=x1-soln_ph
             ZP_magnitude=-40*(pow(0.8, xe))+70
             size_mag_const=-220*np.arctan((ZP_magnitude/10)-4) + 310
+            print(f' 1 xe,ZP,SM {xe}, {ZP_magnitude}, {size_mag_const}')
             return size_mag_const, 0
         
         elif x2<=soln_ph<=14:
             xe=soln_ph-x2
             ZP_magnitude=-40*(pow(0.8, xe))+70
             size_mag_const=-220*np.arctan((ZP_magnitude/10)-4) + 310
+            print(f' 2 xe,ZP,SM {xe}, {ZP_magnitude}, {size_mag_const}')
             return size_mag_const, 0
     
         else:
@@ -106,14 +120,14 @@ class Stability:
             # if i == 'y':
             xe1=abs(x1-soln_ph)
             xe2=abs(x2-soln_ph)
-            if xe1 > xe2:
+            if xe1 < xe2:
                 xe = xe1
-            elif xe2 > xe1:
+            elif xe2 < xe1:
                 xe = xe2
             ZP_magnitude=-40*(pow(0.8, xe))+70
             size_mag_const=-220*np.arctan((ZP_magnitude/10)-4) + 310
+            print(f' 3 xe,ZP,SM {xe}, {ZP_magnitude}, {size_mag_const}')
             return size_mag_const, 1
-        
         
     def estimate_size():
         #Uses the size magnitue constant from is_stable to calculate corrections based on user defined composition
@@ -126,8 +140,8 @@ class Stability:
             cont='y'
         
         if pc==0:
-            sr0=smc/1.3
-            usr0=sr0/5
+            sr0=smc/31.135
+            usr0=sr0/31.13
             srl0=[sr0,usr0]
             if cont == 'y':
                 print(f"\nSilica particle size range estimate is {sr0} +/- {usr0} nm")
@@ -195,6 +209,8 @@ class Stability:
                 return 0.113
             if planet == 2:
                 return 9.8
+            if planet == 3:
+                return 1.315
             
         dp=p_particle() - p_h20
         g= grav()
