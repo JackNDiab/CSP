@@ -15,23 +15,13 @@ p_h20=1.0273
 kb=1.3806 * 10**-23
 SE=[]
 
-# t=float(input("Temperature (Values outside the range of 0 to 95 degrees C are extrapolated): "))
-# c=float(input("Effective Salt Concentration (counterion) in mg ions/g of Colloid *Does not represent total salt concentration* *Acuurate upper limit ~ 5mg/g*: "))
-# pc=int(input("Composition (0=silicate based, 1=magnetite based, 2=Hematite based, 3= Rutile based, 4=carbonate based): "))
-# ci=int(input("Confidence interval of collod stability (75, 80, 90, 95) *80 reccomended*: "))
-# soln_ph=float(input("pH of solution: "))
-# planet= int(input("Planetary body; Ceres(0), Enceladus(1), Earth(2), Europa(3): "))
+t=float(input("Temperature (Values outside the range of 0 to 95 degrees C are extrapolated): "))
+c=float(input("Effective Salt Concentration (counterion) in mg ions/g of Colloid *Does not represent total salt concentration* *Acuurate upper limit ~ 5mg/g*: "))
+pc=int(input("Composition (0=silicate based, 1=magnetite based, 2=Hematite based, 3= Rutile based, 4=carbonate based): "))
+ci=int(input("Confidence interval of collod stability (75, 80, 90, 95) *80 reccomended*: "))
+soln_ph=float(input("pH of solution: "))
+planet= int(input("Planetary body; Ceres(0), Enceladus(1), Earth(2), Europa(3): "))
 
-
-# temp_lst=[-20, -15, -10, -5, 0, 5, 10, 15, 20, 25, 30, 35, 40 ,45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95]
-# p_lst=[]
-
-t=20
-c=0
-pc=0
-ci=80
-soln_ph=5
-planet=3
 
 #comp returns a integer that accounts for differences in the zero point charge pH (phzpc) between particles of differing composition
 #comp correction is based on literature values of 'Schoonen 1994' as well as other emperical phzpc data.
