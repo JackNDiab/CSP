@@ -5,7 +5,7 @@ Program that takes user inputs for the composition, temperature, salt content, p
 All user inputs can be integers or floats. Non-integer inputs will display a key for the input variable. 
 User will be prompted to choose a confidence interval for calculation. estimates. An interval of 80 is reccomended.
 
-***Note*** All estimates and calculations are strictly emperically based! This is meant to be a simple tool for rough size range estimates of some common collids.
+***Note***: All estimates and calculations are strictly emperically based! This is meant to be a simple tool for rough size range estimates of some common collids.
 
 References:
 
