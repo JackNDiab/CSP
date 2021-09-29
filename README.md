@@ -9,6 +9,7 @@ User will be prompted to choose a confidence interval for calculation. estimates
 
 References:
 (1) 	Angelico, R.; Ceglie, A.; He, J. Z.; Liu, Y. R.; Palumbo, G.; Colombo, C. Particle Size, Charge and Colloidal Stability of Humic Acids Coprecipitated with Ferrihydrite. Chemosphere 2014, 99, 239–247. https://doi.org/10.1016/j.chemosphere.2013.10.092.
+
 (2) 	Ghernaout, D. Brownian Motion and Coagulation Process. Am. J. Environ. Prot. 2015, 4 (5), 1. https://doi.org/10.11648/j.ajeps.s.2015040501.11.
 (3) 	Matusiak, J.; Grządka, E. Stability of Colloidal Systems - a Review of the Stability Measurements Methods. Ann. Univ. Mariae Curie-Sklodowska, Sect. AA – Chem. 2017, 72 (1), 33. https://doi.org/10.17951/aa.2017.72.1.33.
 (4) 	Kovalchuk, N. M.; Starov, V. M. Aggregation in Colloidal Suspensions: Effect of Colloidal Forces and Hydrodynamic Interactions. Adv. Colloid Interface Sci. 2012, 179–182, 99–106. https://doi.org/10.1016/j.cis.2011.05.009.
