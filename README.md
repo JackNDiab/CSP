@@ -8,6 +8,7 @@ User will be prompted to choose a confidence interval for calculation. estimates
 ***Note*** All estimates and calculations are strictly emperically based! This is meant to be a simple tool for rough size range estimates of some common collids.
 
 References:
+
 (1)   Angelico, R.; Ceglie, A.; He, J. Z.; Liu, Y. R.; Palumbo, G.; Colombo, C. Particle Size, Charge and Colloidal Stability of Humic Acids Coprecipitated with Ferrihydrite. Chemosphere 2014, 99, 239–247. https://doi.org/10.1016/j.chemosphere.2013.10.092.
 
 (2) 	Ghernaout, D. Brownian Motion and Coagulation Process. Am. J. Environ. Prot. 2015, 4 (5), 1. https://doi.org/10.11648/j.ajeps.s.2015040501.11.
